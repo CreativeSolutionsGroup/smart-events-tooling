@@ -26,5 +26,5 @@ echo "Input the heartbeat URL (ws://localhost:3001):"
 
 read heartbeat_url
 
-echo BACKEND_URL=$backend_url >> .env
-echo HEARTBEAT_URL=$heartbeat_url >> .env
+echo BACKEND_URL=$backend_url >> ../app/.env
+echo HEARTBEAT_URL=$heartbeat_url >> ../app/.env
