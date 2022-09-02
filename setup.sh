@@ -17,3 +17,14 @@ sleep 5
 sudo apt update && sudo apt upgrade
 
 sudo apt install nodejs npm
+
+echo "Input the backend URL (http://localhost:3001/v1):"
+
+read backend_url
+
+echo "Input the heartbeat URL (ws://localhost:3001):"
+
+read heartbeat_url
+
+echo BACKEND_URL=$backend_url >> .env
+echo HEARTBEAT_URL=$heartbeat_url >> .env
