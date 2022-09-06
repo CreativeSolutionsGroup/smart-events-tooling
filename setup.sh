@@ -18,6 +18,21 @@ sudo apt update && sudo apt upgrade
 
 sudo apt install nodejs npm
 
+echo "Removing the network daemon setup."
+systemctl disable systemd-networkd-wait-online.service
+systemctl mask systemd-networkd-wait-online.service
+
+echo "if [[ "$(tty)" == "/dev/tty1" ]]'
+then
+    cd ~/app && npm run dev
+fi" >> ~/.bashrc
+
+SYSTEMD_EDITOR=tee systemctl edit getty@tty1 << EOF
+[Service]
+ExecStart=
+ExecStart=-/sbin/agetty -a k1 --noclear %I $TERM
+EOF
+
 cd ../app
 
 echo "Input the backend URL (http://localhost:3001/v1):"
