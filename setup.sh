@@ -14,9 +14,9 @@ echo "WARNING---- This script will now install all dependencies from apt."
 echo "Waiting for five seconds."
 sleep 5
 
-sudo apt update && sudo apt upgrade
+sudo apt update -y && sudo apt upgrade -y
 
-sudo apt install nodejs npm
+sudo apt install -y nodejs npm
 
 echo "Removing the network daemon setup."
 sudo systemctl disable systemd-networkd-wait-online.service
@@ -27,7 +27,7 @@ then
     cd ~/app && npm run dev
 fi" >> ~/.bashrc
 
-SYSTEMD_EDITOR=tee systemctl edit getty@tty1 << EOF
+SYSTEMD_EDITOR=tee sudo systemctl edit getty@tty1 << EOF
 [Service]
 ExecStart=
 ExecStart=-/sbin/agetty -a kiosk --noclear %I $TERM
