@@ -22,7 +22,7 @@ echo "Removing the network daemon setup."
 systemctl disable systemd-networkd-wait-online.service
 systemctl mask systemd-networkd-wait-online.service
 
-echo "if [[ "$(tty)" == "/dev/tty1" ]]'
+echo "if [[ "$(tty)" == "/dev/tty1" ]]
 then
     cd ~/app && npm run dev
 fi" >> ~/.bashrc
@@ -30,7 +30,7 @@ fi" >> ~/.bashrc
 SYSTEMD_EDITOR=tee systemctl edit getty@tty1 << EOF
 [Service]
 ExecStart=
-ExecStart=-/sbin/agetty -a k1 --noclear %I $TERM
+ExecStart=-/sbin/agetty -a kiosk --noclear %I $TERM
 EOF
 
 cd ../app
