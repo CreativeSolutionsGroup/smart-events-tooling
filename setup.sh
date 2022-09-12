@@ -19,8 +19,8 @@ sudo apt update && sudo apt upgrade
 sudo apt install nodejs npm
 
 echo "Removing the network daemon setup."
-systemctl disable systemd-networkd-wait-online.service
-systemctl mask systemd-networkd-wait-online.service
+sudo systemctl disable systemd-networkd-wait-online.service
+sudo systemctl mask systemd-networkd-wait-online.service
 
 echo "if [[ "$(tty)" == "/dev/tty1" ]]
 then
