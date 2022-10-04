@@ -24,10 +24,8 @@ echo "Removing the network daemon setup."
 sudo systemctl disable systemd-networkd-wait-online.service
 sudo systemctl mask systemd-networkd-wait-online.service
 
-echo "if [[ "$(tty)" == "/dev/tty1" ]]
-then
-    cd ~/app && npm run dev
-fi" >> ~/.bashrc
+# We can do this no matter what... doesn't really matter.
+echo "cd ~/app && npm run dev" >> ~/.bashrc
 
 SYSTEMD_EDITOR=tee sudo systemctl edit getty@tty1 << EOF
 [Service]
