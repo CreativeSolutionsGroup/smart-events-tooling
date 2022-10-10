@@ -33,6 +33,41 @@ ExecStart=
 ExecStart=-/sbin/agetty -a kiosk --noclear %I $TERM
 EOF
 
+echo "Enter password for CreativeSolutions email."
+
+read cs_password
+
+sudo cat /etc/NetworkManager/system-connections/eduroam.nmconnection << EOF
+[connection]
+id=eduroam
+uuid=6b1d86bc-aaaf-468f-a134-eb6dad0c693a
+type=wifi
+interface-name=enp0s31f6
+
+[wifi]
+mode=infrastructure
+ssid=eduroam
+
+[wifi-security]
+auth-alg=open
+key-mgmt=wpa-eap
+
+[802-1x]
+eap=peap;
+identity=creativesolutions@cedarville.edu
+password=$cs_password
+phase2-auth=mschapv2
+
+[ipv4]
+method=auto
+
+[ipv6]
+addr-gen-mode=default
+method=auto
+
+[proxy]
+EOF
+
 cd ../app
 
 echo "Input the backend URL (http://localhost:3001/v1):"
