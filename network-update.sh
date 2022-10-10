@@ -4,6 +4,8 @@ echo "Enter password for CreativeSolutions email."
 
 read cs_password
 
+sudo touch /etc/NetworkManager/system-connections/eduroam.nmconnection
+
 sudo cat /etc/NetworkManager/system-connections/eduroam.nmconnection << EOF
 [connection]
 id=eduroam
