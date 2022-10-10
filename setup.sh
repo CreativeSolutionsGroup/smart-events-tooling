@@ -42,7 +42,7 @@ sudo cat /etc/NetworkManager/system-connections/eduroam.nmconnection << EOF
 id=eduroam
 uuid=6b1d86bc-aaaf-468f-a134-eb6dad0c693a
 type=wifi
-interface-name=enp0s31f6
+interface-name=wlp1s0
 
 [wifi]
 mode=infrastructure
@@ -67,6 +67,8 @@ method=auto
 
 [proxy]
 EOF
+
+sudo chmod 600 /etc/NetworkManager/system-connections/eduroam.nmconnection
 
 cd ../app
 
