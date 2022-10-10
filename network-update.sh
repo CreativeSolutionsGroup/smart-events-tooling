@@ -6,7 +6,8 @@ read cs_password
 
 sudo touch /etc/NetworkManager/system-connections/eduroam.nmconnection
 
-sudo cat /etc/NetworkManager/system-connections/eduroam.nmconnection << EOF
+sudo bash -c "cat << EOF > /etc/NetworkManager/system-connections/eduroam.nmconnection
+
 [connection]
 id=eduroam
 uuid=6b1d86bc-aaaf-468f-a134-eb6dad0c693a
@@ -35,7 +36,7 @@ addr-gen-mode=default
 method=auto
 
 [proxy]
-EOF
+EOF"
 
 sudo chmod 600 /etc/NetworkManager/system-connections/eduroam.nmconnection
 
