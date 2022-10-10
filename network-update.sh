@@ -38,3 +38,7 @@ method=auto
 EOF
 
 sudo chmod 600 /etc/NetworkManager/system-connections/eduroam.nmconnection
+
+sudo systemctl restart NetworkManager 
+
+sudo nmcli con up eduroam
