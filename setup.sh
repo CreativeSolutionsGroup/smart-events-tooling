@@ -27,7 +27,7 @@ sudo systemctl mask systemd-networkd-wait-online.service
 sudo npm install -g pm2
 
 # We can do this no matter what... doesn't really matter.
-echo "cd ~/app && pm2-runtime start 'npm run dev' --watch" >> ~/.bashrc
+echo "cd ~/app && pm2-runtime start 'npm run dev' --error ~/error.$(date +'%F_%H_%M').log" >> ~/.bashrc
 
 echo -e "[Service]\nExecStart=\nExecStart=-/sbin/agetty -a kiosk --noclear %I $TERM" | sudo SYSTEMD_EDITOR=tee systemctl edit getty@tty1
 . network-update.sh
