@@ -24,15 +24,12 @@ echo "Removing the network daemon setup."
 sudo systemctl disable systemd-networkd-wait-online.service
 sudo systemctl mask systemd-networkd-wait-online.service
 
+sudo npm install -g pm2
+
 # We can do this no matter what... doesn't really matter.
-echo "cd ~/app && npm run dev" >> ~/.bashrc
+echo "cd ~/app && pm2-runtime start 'npm run dev' --watch" >> ~/.bashrc
 
-SYSTEMD_EDITOR=tee sudo systemctl edit getty@tty1 << EOF
-[Service]
-ExecStart=
-ExecStart=-/sbin/agetty -a kiosk --noclear %I $TERM
-EOF
-
+echo -e "[Service]\nExecStart=\nExecStart=-/sbin/agetty -a kiosk --noclear %I $TERM" | sudo SYSTEMD_EDITOR=tee systemctl edit getty@tty1
 . network-update.sh
 
 cd ../app
