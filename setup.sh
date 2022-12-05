@@ -14,7 +14,7 @@ echo "WARNING---- This script will now install all dependencies from apt."
 echo "Waiting for five seconds."
 sleep 5
 
-(crontab -l ; echo "* * * * * git -C /home/kiosk/smart-events-terminal-app pull") | crontab -
+#(crontab -l ; echo "* * * * * git -C /home/kiosk/smart-events-terminal-app pull") | crontab -
 
 sudo apt update -y && sudo apt upgrade -y
 
