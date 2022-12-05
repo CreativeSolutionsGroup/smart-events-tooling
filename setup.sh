@@ -24,7 +24,9 @@ echo "Removing the network daemon setup."
 sudo systemctl disable systemd-networkd-wait-online.service
 sudo systemctl mask systemd-networkd-wait-online.service
 
-sudo npm install -g pm2
+sudo npm install -g pm2 n
+
+sudo n stable
 
 # We can do this no matter what... doesn't really matter.
 echo "cd ~/app && pm2-runtime start 'npm run start' --error ~/error.$(date +'%F_%H_%M').log" >> ~/.bashrc
@@ -33,6 +35,7 @@ echo -e "[Service]\nExecStart=\nExecStart=-/sbin/agetty -a kiosk --noclear %I $T
 . network-update.sh
 
 cd ../app
+npm run build
 
 echo "Input the backend URL (http://localhost:3001/v1):"
 
@@ -46,4 +49,3 @@ echo BACKEND_URL=$backend_url >> .env
 echo HEARTBEAT_URL=$heartbeat_url >> .env
 
 npm i
-npm run build
