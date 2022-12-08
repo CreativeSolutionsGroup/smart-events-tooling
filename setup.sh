@@ -30,7 +30,7 @@ sudo n stable
 
 # We can do this no matter what... doesn't really matter.
 sed -i '$ d' ~/.bashrc
-echo "cd ~/app && pm2 start build/main.js --error ~/error.\$(date +'%F_%H_%M').log && pm2 attach 0" >> ~/.bashrc
+echo "cd ~/app && pm2 start build/main.js --error ~/logs/error.\$(date +'%F_%H_%M').log && pm2 attach 0" >> ~/.bashrc
 
 echo -e "[Service]\nExecStart=\nExecStart=-/sbin/agetty -a kiosk --noclear %I $TERM" | sudo SYSTEMD_EDITOR=tee systemctl edit getty@tty1
 . network-update.sh
