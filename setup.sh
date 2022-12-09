@@ -10,43 +10,115 @@ echo
 
 git clone https://github.com/CreativeSolutionsGroup/smart-events-terminal-app.git ../app
 
-echo "WARNING---- This script will now install all dependencies from apt."
-echo "Waiting for five seconds."
-sleep 5
-
 #(crontab -l ; echo "* * * * * git -C /home/kiosk/smart-events-terminal-app pull") | crontab -
 
-sudo apt update -y && sudo apt upgrade -y
+install_dependencies () {
+  sudo apt update -y && sudo apt upgrade -y
+  sudo apt install -y nodejs npm
+  sudo npm install -g pm2 n
+  sudo n stable
+}
 
-sudo apt install -y nodejs npm
+optimize () {
+  echo "Removing the network daemon setup."
+  sudo systemctl disable systemd-networkd-wait-online.service
+  sudo systemctl mask systemd-networkd-wait-online.service
+}
 
-echo "Removing the network daemon setup."
-sudo systemctl disable systemd-networkd-wait-online.service
-sudo systemctl mask systemd-networkd-wait-online.service
+setup_app () {
+  # Add startup script
+  sed -i '$ d' ~/.bashrc
+  echo "cd ~/app && pm2 start build/main.js --error ~/logs/error.\$(date +'%F_%H_%M').log && pm2 attach 0" >> ~/.bashrc
 
-sudo npm install -g pm2 n
+  # Autologin
+  echo -e "[Service]\nExecStart=\nExecStart=-/sbin/agetty -a kiosk --noclear %I $TERM" | sudo SYSTEMD_EDITOR=tee systemctl edit getty@tty1
 
-sudo n stable
+  # Build app
+  cd ../app
+  npm run build
+}
 
-# We can do this no matter what... doesn't really matter.
-sed -i '$ d' ~/.bashrc
-echo "cd ~/app && pm2 start build/main.js --error ~/logs/error.\$(date +'%F_%H_%M').log && pm2 attach 0" >> ~/.bashrc
+prompt_network_update () {
+  echo "Enter password for CreativeSolutions email."
 
-echo -e "[Service]\nExecStart=\nExecStart=-/sbin/agetty -a kiosk --noclear %I $TERM" | sudo SYSTEMD_EDITOR=tee systemctl edit getty@tty1
-. network-update.sh
+  read cs_password
 
-cd ../app
-npm run build
+  sudo touch /etc/NetworkManager/system-connections/eduroam.nmconnection
 
-echo "Input the backend URL (http://localhost:3001/v1):"
+  sudo bash -c "cat << EOF > /etc/NetworkManager/system-connections/eduroam.nmconnection
+  [connection]
+  id=eduroam
+  uuid=6b1d86bc-aaaf-468f-a134-eb6dad0c693a
+  type=wifi
+  interface-name=wlp1s0
 
-read backend_url
+  [wifi]
+  mode=infrastructure
+  ssid=eduroam
 
-echo "Input the heartbeat URL (ws://localhost:3001):"
+  [wifi-security]
+  auth-alg=open
+  key-mgmt=wpa-eap
 
-read heartbeat_url
+  [802-1x]
+  eap=peap;
+  identity=creativesolutions@cedarville.edu
+  password=$cs_password
+  phase2-auth=mschapv2
 
-echo BACKEND_URL=$backend_url >> .env
-echo HEARTBEAT_URL=$heartbeat_url >> .env
+  [ipv4]
+  method=auto
+
+  [ipv6]
+  addr-gen-mode=default
+  method=auto
+
+  [proxy]
+  EOF"
+
+  sudo chmod 600 /etc/NetworkManager/system-connections/eduroam.nmconnection
+  sudo systemctl restart NetworkManager 
+  sudo nmcli con up eduroam
+}
+
+prompt_env () {
+  echo "Input the backend URL (http://localhost:3001/v1):"
+
+  read backend_url
+
+  echo "Input the heartbeat URL (ws://localhost:3001):"
+
+  read heartbeat_url
+
+  echo BACKEND_URL=$backend_url >> .env
+  echo HEARTBEAT_URL=$heartbeat_url >> .env
+}
+
+full_setup () {
+  install_dependencies()
+  optimize()
+  setup_app()
+
+  prompt_network_update()
+  prompt_env()
+}
+
+echo "What do you wish to do?"
+echo "1 Install dependencies"
+echo "2 Setup app"
+echo "3 Do eduroam network update"
+echo "4 Set environment variables"
+echo "5 Run full setup"
+echo "e exit"
+select abcdef in "1" "2" "3" "4" "5" "e"; do
+    case $abcd in
+        a ) install_dependencies(); break;;
+        b ) setup_app(); break;;
+        c ) prompt_network_update(); break;;
+        d ) prompt_env(); break;;
+        d ) full_setup(); break;;
+        e ) exit;;
+    esac
+done
 
 npm i
