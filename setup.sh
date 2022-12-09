@@ -5,10 +5,6 @@ echo
 
 echo "Attempting to setup the terminal application."
 echo "Assuming there is no git key installed on GitHub."
-echo
-echo
-
-git clone https://github.com/CreativeSolutionsGroup/smart-events-terminal-app.git ../app
 
 #(crontab -l ; echo "* * * * * git -C /home/kiosk/smart-events-terminal-app pull") | crontab -
 
@@ -26,6 +22,7 @@ optimize () {
 }
 
 setup_app () {
+  git clone https://github.com/CreativeSolutionsGroup/smart-events-terminal-app.git ../app
   # Add startup script
   sed -i '$ d' ~/.bashrc
   echo "cd ~/app && pm2 start build/main.js --error ~/logs/error.\$(date +'%F_%H_%M').log && pm2 attach 0" >> ~/.bashrc
@@ -95,29 +92,23 @@ prompt_env () {
 }
 
 full_setup () {
-  install_dependencies()
-  optimize()
-  setup_app()
+  echo "Running full setup."
+  install_dependencies
+  optimize
+  setup_app
 
-  prompt_network_update()
-  prompt_env()
+  prompt_network_update
+  prompt_env
 }
 
-echo "What do you wish to do?"
-echo "1 Install dependencies"
-echo "2 Setup app"
-echo "3 Do eduroam network update"
-echo "4 Set environment variables"
-echo "5 Run full setup"
-echo "e exit"
-select abcdef in "1" "2" "3" "4" "5" "e"; do
-    case $abcd in
-        a ) install_dependencies(); break;;
-        b ) setup_app(); break;;
-        c ) prompt_network_update(); break;;
-        d ) prompt_env(); break;;
-        d ) full_setup(); break;;
-        e ) exit;;
+select op in "install" "setup" "network" "env" "full" "exit"; do
+    case $op in
+        install ) install_dependencies; break;;
+        setup ) setup_app; break;;
+        network ) prompt_network_update; break;;
+        env ) prompt_env; break;;
+        full ) full_setup; break;;
+        exit ) exit;;
     esac
 done
 
