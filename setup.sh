@@ -28,7 +28,7 @@ setup_app () {
   echo "cd ~/app && pm2 start build/main.js --error ~/logs/error.\$(date +'%F_%H_%M').log && pm2 attach 0" >> ~/.bashrc
 
   # Autologin
-  echo -e "[Service]\nExecStart=\nExecStart=-/sbin/agetty -a kiosk --noclear %I $TERM" | sudo SYSTEMD_EDITOR=tee systemctl edit getty@tty1
+  echo -e "[Service]\nExecStart=\nExecStart=-/sbin/agetty -a kiosk --noclear %I \$TERM" | sudo SYSTEMD_EDITOR=tee systemctl edit getty@tty1
 
   # Build app
   cd ../app
