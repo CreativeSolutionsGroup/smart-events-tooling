@@ -1,5 +1,7 @@
 #!/bin/bash
 
+sudo su
+
 echo "A Product of Creative Solutions Group"
 echo
 
@@ -8,45 +10,20 @@ echo "Assuming there is no git key installed on GitHub."
 echo
 echo
 
-git clone https://github.com/CreativeSolutionsGroup/smart-events-terminal-app.git ../app
-
-echo "WARNING---- This script will now install all dependencies from apt."
-echo "Waiting for five seconds."
-sleep 5
-
-#(crontab -l ; echo "* * * * * git -C /home/kiosk/smart-events-terminal-app pull") | crontab -
-
-sudo apt update -y && sudo apt upgrade -y
-
-sudo apt install -y nodejs npm
+wget https://github.com/CreativeSolutionsGroup/smart-events-rust-terminal/releases/download/v0.1.2/terminal_app
+chmod +x terminal_app
 
 echo "Removing the network daemon setup."
 sudo systemctl disable systemd-networkd-wait-online.service
 sudo systemctl mask systemd-networkd-wait-online.service
 
-sudo npm install -g pm2 n
-
-sudo n stable
-
-# We can do this no matter what... doesn't really matter.
-sed -i '$ d' ~/.bashrc
-echo "cd ~/app && pm2 start build/main.js --error ~/logs/error.\$(date +'%F_%H_%M').log && pm2 attach 0" >> ~/.bashrc
+echo -e "until ./terminal_app; do\nsleep 1\ndone" >> .bashrc
 
 echo -e "[Service]\nExecStart=\nExecStart=-/sbin/agetty -a kiosk --noclear %I $TERM" | sudo SYSTEMD_EDITOR=tee systemctl edit getty@tty1
 . network-update.sh
 
-cd ../app
-npm run build
+echo "Input the heartbeat URL (tcp://proxy.localhost:3001):"
+read proxy_url
 
-echo "Input the backend URL (http://localhost:3001/v1):"
+sudo echo PROXY_URL=$proxy_url >> /etc/environment
 
-read backend_url
-
-echo "Input the heartbeat URL (ws://localhost:3001):"
-
-read heartbeat_url
-
-echo BACKEND_URL=$backend_url >> .env
-echo HEARTBEAT_URL=$heartbeat_url >> .env
-
-npm i
