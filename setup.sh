@@ -17,7 +17,7 @@ echo "Removing the network daemon setup."
 sudo systemctl disable systemd-networkd-wait-online.service
 sudo systemctl mask systemd-networkd-wait-online.service
 
-echo -e "until ./terminal_app; do\nsleep 1\ndone" >> ~/.bashrc
+echo -e "until ./terminal_app; do\nsleep 1\ndone" >> .bashrc
 
 echo -e "[Service]\nExecStart=\nExecStart=-/sbin/agetty -a kiosk --noclear %I $TERM" | sudo SYSTEMD_EDITOR=tee systemctl edit getty@tty1
 . network-update.sh
